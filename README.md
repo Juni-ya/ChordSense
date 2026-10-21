@@ -56,25 +56,5 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## 🌐 Deployment Guide
-
-### Step 1: Deploy Backend (Render.com / Railway / Docker)
-1. Push your repository to GitHub.
-2. In Render / Railway, create a new Web Service pointing to `server/`.
-3. Build command: `npm install && npm run build`
-4. Start command: `npm start`
-5. Set environment variables:
-   * `PORT` = `3001`
-   * `GEMINI_API_KEY` = your Google AI key (optional, for multimodal synthesis)
-
-### Step 2: Deploy Frontend to Vercel
-1. Import repository into Vercel pointing to the `client/` root.
-2. Build command: `npm run build`
-3. Output directory: `dist`
-4. Add environment variable:
-   * `VITE_API_URL` = `https://your-backend.onrender.com`
-
----
-
 ## 📄 License
 MIT License.
