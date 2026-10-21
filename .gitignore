@@ -11,12 +11,18 @@ build/
 */build/
 *.tsbuildinfo
 
-# Environment Variables & Secrets (CRITICAL)
+# Environment Variables, Secrets & Keys (CRITICAL)
 .env
 .env.*
 !.env.example
 *.env
 server/.env
+client/.env
+*.pem
+*.key
+*.cert
+credentials.json
+*.secret
 
 # Audio Cache & Demucs Stems
 chordsense-cache/
@@ -38,12 +44,21 @@ yarn-debug.log*
 target/
 crates/**/target/
 
-# OS / Editor
+# OS / Editor / IDE
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+.cursor/
+.windsurf/
 
-# Internal Agent Skills
+# Internal Agent Skills, Prompts & Scratch Files
 .agents/
+.agent/
+.gemini/
 cinematic-ui/
+scratch/
+compiled-spec.md
+decisions.md
+storyboard.md
+*.spec.md
