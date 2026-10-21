@@ -118,14 +118,14 @@ const CANDIDATE_MODELS = [
 export async function analyzeWithGemini(
   audioFilePath: string,
   metadata?: VideoMetadata,
-  tabGrounding?: TabGrounding | null
+  tabGrounding?: TabGrounding | null,
+  customApiKey?: string
 ): Promise<GeminiChordResponse> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = customApiKey || process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
     throw new Error(
-      'GEMINI_API_KEY is not set. Please set it in your .env file. ' +
-      'Get a key at https://aistudio.google.com/apikey'
+      'GEMINI_API_KEY is not configured. Please enter your API key in the application settings or set it in server/.env.'
     );
   }
 

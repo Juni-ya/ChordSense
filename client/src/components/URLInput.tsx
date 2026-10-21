@@ -102,46 +102,30 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
-      {/* Station Coordinates & Telemetry Header */}
-      <div className="mb-6 flex items-center justify-between text-[11px] font-mono text-[#86949e] border-b border-[#2a333a] pb-2">
-        <div className="flex items-center gap-2">
-          <Compass className="w-3.5 h-3.5 text-[#d4a35f]" />
-          <span>DECK 01 // FREQUENCY INGEST</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span>SAMPLING: 22,050 HZ</span>
-          <span>•</span>
-          <span>ENGINE: {engine === 'studio_master' ? 'STUDIO MASTER (DEMUCS + BTC + BASS)' : 'FAST PREVIEW (BTC RAW)'}</span>
-        </div>
-      </div>
-
-      {/* Anamorphic Letterbox Chamber Frame (#4 Letterbox Cinema) */}
+      {/* Anamorphic Letterbox Chamber Frame */}
       <div className="cinema-letterbox bracket-container p-6 sm:p-10">
         <div className="bracket-tl" />
         <div className="bracket-tr" />
         <div className="bracket-bl" />
         <div className="bracket-br" />
 
-        {/* Central Monolithic Header */}
+        {/* Central Header */}
         <div className="text-center max-w-2xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 mb-3">
             <span className="telemetry-stamp telemetry-stamp-active">
-              ACOUSTIC SIGNAL DECODER
-            </span>
-            <span className="telemetry-stamp">
-              RUST WASM ACTIVE
+              STUDIO MASTER AI
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[#eceeed] mb-3 uppercase">
-            Harmonic Decryption
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#eceeed] mb-2 uppercase">
+            Identify Chords from Any Song
           </h1>
           <p className="text-[#86949e] text-sm sm:text-base font-normal max-w-lg mx-auto">
-            Input a video link or local audio recording to decompose its acoustic frequencies into real-time synchronized chord voicings.
+            Paste a YouTube link or upload an audio file to extract real-time guitar and piano chords with studio accuracy.
           </p>
         </div>
 
-        {/* Tactical Mode Segmented Switch */}
+        {/* Mode Selector */}
         <div className="flex justify-center mb-6">
           <div className="inline-flex p-0.5 bg-[#08090a] border border-[#2a333a]">
             <button
@@ -157,7 +141,7 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
               }`}
             >
               <Youtube className="w-3.5 h-3.5 text-red-400" />
-              <span>YOUTUBE STREAM</span>
+              <span>YOUTUBE URL</span>
             </button>
 
             <button
@@ -173,8 +157,7 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
               }`}
             >
               <Upload className="w-3.5 h-3.5 text-[#d4a35f]" />
-              <span>LOCAL AUDIO BUFFER</span>
-              <span className="text-[10px] text-[#4a5761]">(WASM)</span>
+              <span>AUDIO FILE</span>
             </button>
           </div>
         </div>
@@ -189,18 +172,16 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
-              {/* Studio Master Architecture Controller (Denis Villeneuve Arrival cinematic telemetry) */}
+              {/* Studio Master Architecture Controller */}
               <div className="mb-6 border border-[#2a333a] bg-[#0c0f11] p-3 sm:p-5">
                 <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#1e252b] text-[10px] font-mono uppercase tracking-wider">
                   <div className="flex items-center gap-2 text-[#eceeed]">
                     <Sparkles className="w-4 h-4 text-[#d4a35f]" />
-                    <span className="font-bold text-xs tracking-wider">STUDIO MASTER ACCURACY ENGINE</span>
+                    <span className="font-bold text-xs tracking-wider">STUDIO MASTER PIPELINE</span>
                   </div>
                   <div className="flex items-center gap-2 text-[#86949e]">
-                    <span>STATUS: ARMED</span>
-                    <span>•</span>
                     <span className="text-[#d4a35f] font-bold">
-                      {engine === 'studio_master' ? 'STUDIO MASTER PIPELINE' : 'FAST PREVIEW'}
+                      {engine === 'studio_master' ? 'MAX ACCURACY' : 'FAST PREVIEW'}
                     </span>
                   </div>
                 </div>
@@ -218,37 +199,34 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm font-black tracking-wide text-[#eceeed]">
-                          ★ STUDIO MASTER PIPELINE (MAXIMUM ACCURACY)
+                          ★ STUDIO MASTER (STEM SEPARATION &amp; BASS TRACKING)
                         </span>
                         <span className="text-[9px] font-mono px-2 py-0.5 bg-[#d4a35f] text-black font-extrabold uppercase tracking-widest">
                           ACTIVE
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-[#d4a35f] font-bold">
-                        META HTDEMUCS + BTC + BASS TRACKER
-                      </span>
                     </div>
 
                     <p className="text-xs font-mono text-[#a2b0b9] leading-relaxed mb-4">
-                      Disregards speed limits to achieve 1:1 studio chord transcription. Runs Meta AI&apos;s Neural HTDemucs to isolate guitars/keys from the bassline and drums, runs the BTC Transformer on clean harmony, and tracks true physical bass roots for authentic slash chords ($G/B, C/E$).
+                      Isolates guitars and piano from basslines and drums using Meta HTDemucs, tracks true bass roots for slash chords ($G/B, C/E$), and filters out passing tone blips.
                     </p>
 
                     {/* 4-Stage Architectural Flowchart */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-[#1e252b] text-[10px] font-mono">
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 1</span>
-                        <span className="text-[#eceeed] font-medium block">Demucs Stems</span>
-                        <span className="text-[#657683] text-[9px]">Zero bass bleed</span>
+                        <span className="text-[#eceeed] font-medium block">Stem Separation</span>
+                        <span className="text-[#657683] text-[9px]">Guitars/keys isolated</span>
                       </div>
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 2</span>
                         <span className="text-[#eceeed] font-medium block">BTC Harmonics</span>
-                        <span className="text-[#657683] text-[9px]">0.09s transient lock</span>
+                        <span className="text-[#657683] text-[9px]">Downbeat sync</span>
                       </div>
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 3</span>
                         <span className="text-[#eceeed] font-medium block">Bass Tracking</span>
-                        <span className="text-[#657683] text-[9px]">G/B &amp; C/E inversions</span>
+                        <span className="text-[#657683] text-[9px]">Slash chords (G/B, C/E)</span>
                       </div>
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 4</span>
@@ -260,13 +238,13 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
 
                   {/* Secondary Instant Test Toggle */}
                   <div className="flex items-center justify-between text-xs font-mono text-[#86949e] px-1">
-                    <span className="text-[11px]">Need instant 3-second result instead?</span>
+                    <span className="text-[11px]">Need 3-second quick result instead?</span>
                     <button
                       type="button"
                       onClick={() => setEngine(engine === 'btc' ? 'studio_master' : 'btc')}
                       className="text-[#d4a35f] hover:underline cursor-pointer flex items-center gap-1 text-[11px]"
                     >
-                      {engine === 'btc' ? '← Switch to Studio Master' : '⚡ Switch to Quick Preview (BTC Raw)'}
+                      {engine === 'btc' ? '← Switch to Studio Master' : '⚡ Quick Preview (BTC Raw)'}
                     </button>
                   </div>
                 </div>

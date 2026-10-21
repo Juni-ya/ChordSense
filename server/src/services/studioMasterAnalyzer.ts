@@ -64,7 +64,8 @@ export async function analyzeStudioMaster(
   audioPath: string,
   videoId: string,
   metadata?: VideoMetadata,
-  tabGrounding?: TabGrounding | null
+  tabGrounding?: TabGrounding | null,
+  customApiKey?: string
 ): Promise<SongAnalysisResponse> {
   console.log(`[studioMaster] Commencing Studio Master Pipeline for video ${videoId}...`);
 
@@ -85,7 +86,7 @@ export async function analyzeStudioMaster(
 
   // Step 4: Run Gemini on audio for high-level musical reasoning
   console.log('[studioMaster] Step 4/4: Running Multimodal AI musicological synthesis...');
-  const geminiPromise = analyzeWithGemini(audioPath, metadata, tabGrounding).catch((err) => {
+  const geminiPromise = analyzeWithGemini(audioPath, metadata, tabGrounding, customApiKey).catch((err) => {
     console.warn('[studioMaster] Gemini analysis fallback in studio master:', err.message);
     return null;
   });

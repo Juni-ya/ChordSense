@@ -21,7 +21,13 @@ const router = Router();
  */
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { url, refresh, engine } = req.body as { url?: string; refresh?: boolean; engine?: 'studio_master' | 'hybrid' | 'btc' | 'gemini' };
+    const { url, refresh, engine, apiKey } = req.body as {
+      url?: string;
+      refresh?: boolean;
+      engine?: 'studio_master' | 'hybrid' | 'btc' | 'gemini';
+      apiKey?: string;
+    };
+    const customApiKey = apiKey || (req.headers['x-gemini-api-key'] as string | undefined);
 
     if (!url) {
       res.status(400).json({ error: 'Missing "url" in request body' });
@@ -73,7 +79,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     if (selectedEngine === 'studio_master') {
       // Option 4: The Studio Master Pipeline (Meta Demucs + BTC on clean harmony + Bass tracking + Gemini)
       console.log(`[analyze] Running STUDIO MASTER PIPELINE (Demucs + BTC + Bass Inversions + Gemini)...`);
-      response = await analyzeStudioMaster(audioPath, videoId, metadata, tabGrounding);
+      response = await analyzeStudioMaster(audioPath, videoId, metadata, tabGrounding, customApiKey);
     } else if (selectedEngine === 'hybrid') {
       // Dual-Layer Hybrid Consensus (BTC + Gemini ensembled)
       console.log(`[analyze] Running Dual-Layer Consensus Engine (BTC + Gemini)...`);
@@ -81,7 +87,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     } else if (selectedEngine === 'gemini') {
       // Direct Gemini analysis
       console.log(`[analyze] Running Gemini multimodal audio recognition directly...`);
-      const geminiResult = await analyzeWithGemini(audioPath, metadata, tabGrounding);
+      const geminiResult = await analyzeWithGemini(audioPath, metadata, tabGrounding, customApiKey);
       const chords: ChordSegment[] = geminiResult.chords.map((c) => {
         const parsed = parseChordSymbol(c.chord);
         return {
@@ -114,7 +120,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         response.engine = 'btc';
       } catch (btcErr) {
         console.warn('[analyze] BTC model encountered error, falling back to Gemini:', btcErr);
-        const geminiResult = await analyzeWithGemini(audioPath, metadata, tabGrounding);
+        const geminiResult = await analyzeWithGemini(audioPath, metadata, tabGrounding, customApiKey);
         const chords: ChordSegment[] = geminiResult.chords.map((c) => {
           const parsed = parseChordSymbol(c.chord);
           return {

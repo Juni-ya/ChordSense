@@ -7,11 +7,13 @@ interface TransposeControlsProps {
   syncOffset: number;
   accidentalPreference: AccidentalPreference;
   filterPassingChords: boolean;
+  showConfidence?: boolean;
   onTransposeChange: (value: number) => void;
   onCapoChange: (value: number) => void;
   onSyncOffsetChange: (value: number) => void;
   onAccidentalPreferenceChange: (pref: AccidentalPreference) => void;
   onFilterPassingChordsChange: (enabled: boolean) => void;
+  onShowConfidenceChange?: (val: boolean) => void;
   songKey: string;
   suggestedCapo?: number;
 }
@@ -22,11 +24,13 @@ export default function TransposeControls({
   syncOffset,
   accidentalPreference,
   filterPassingChords,
+  showConfidence = false,
   onTransposeChange,
   onCapoChange,
   onSyncOffsetChange,
   onAccidentalPreferenceChange,
   onFilterPassingChordsChange,
+  onShowConfidenceChange,
   songKey,
   suggestedCapo,
 }: TransposeControlsProps) {
@@ -34,7 +38,7 @@ export default function TransposeControls({
     <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
       {/* Musical Key Matrix */}
       <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#14191d] border border-[#2a333a]">
-        <span className="text-[#86949e]">FUNDAMENTAL KEY:</span>
+        <span className="text-[#86949e]">KEY:</span>
         <span className="font-bold text-[#eceeed]">{songKey}</span>
       </div>
 
@@ -69,6 +73,29 @@ export default function TransposeControls({
         </div>
       </div>
 
+      {/* Confidence Indicators Toggle */}
+      {onShowConfidenceChange && (
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#14191d] border border-[#2a333a]">
+          <span className="text-[#86949e]">CONFIDENCE:</span>
+          <button
+            type="button"
+            onClick={() => onShowConfidenceChange(!showConfidence)}
+            className={`px-2 py-0.5 text-xs font-mono font-bold transition-colors cursor-pointer ${
+              showConfidence
+                ? 'bg-[rgba(212,163,95,0.18)] text-[#d4a35f] border border-[#d4a35f]'
+                : 'text-[#86949e] hover:text-[#eceeed]'
+            }`}
+            title={
+              showConfidence
+                ? 'Hide confidence tags and warning indicators'
+                : 'Show confidence percentage tags and accuracy alerts'
+            }
+          >
+            {showConfidence ? 'SHOWN' : 'HIDDEN'}
+          </button>
+        </div>
+      )}
+
       {/* Passing Chords / Transient Blip Filter Toggle */}
       <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#14191d] border border-[#2a333a]">
         <span className="text-[#86949e]">PASSING NOTES:</span>
@@ -82,11 +109,11 @@ export default function TransposeControls({
           }`}
           title={
             filterPassingChords
-              ? 'Filtering out transient 1-second passing notes, vocal vibrato, and bass walkdowns'
+              ? 'Filtering out transient passing notes, vocal vibrato, and bass walkdowns'
               : 'Displaying all raw transient passing notes'
           }
         >
-          {filterPassingChords ? '🛡️ CLEAN (FILTER <1.3S)' : 'RAW (ALL NOTES)'}
+          {filterPassingChords ? '🛡️ CLEAN (<1.3S)' : 'RAW'}
         </button>
       </div>
 

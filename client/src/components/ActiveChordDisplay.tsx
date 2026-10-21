@@ -10,6 +10,7 @@ interface ActiveChordDisplayProps {
   currentTime: number;
   accidentalPreference?: AccidentalPreference;
   onSeek?: (time: number) => void;
+  showConfidence?: boolean;
 }
 
 function formatTime(seconds: number): string {
@@ -25,6 +26,7 @@ export default function ActiveChordDisplay({
   currentTime,
   accidentalPreference,
   onSeek,
+  showConfidence = false,
 }: ActiveChordDisplayProps) {
   let progress = 0;
   if (currentChord) {
@@ -51,15 +53,29 @@ export default function ActiveChordDisplay({
         {/* Telemetry Header */}
         <div className="flex items-center justify-between text-[11px] font-mono text-[#86949e] border-b border-[#2a333a] pb-2">
           <div className="flex items-center gap-1.5">
-            <span className={`w-2 h-2 ${isConfident ? 'bg-[#d4a35f]' : 'bg-[#e06c75]'} inline-block`} />
-            <span className="text-[#eceeed] font-bold">TRANSLATING HARMONIC SPECIMEN</span>
+            <span
+              className={`w-2 h-2 ${
+                !showConfidence || isConfident ? 'bg-[#d4a35f]' : 'bg-[#e06c75]'
+              } inline-block`}
+            />
+            <span className="text-[#eceeed] font-bold">NOW PLAYING</span>
           </div>
-          <span className={isConfident ? 'text-[#d4a35f]' : 'text-[#e06c75]'}>
-            {currentChord ? (isConfident ? 'LIVE SIGNAL' : 'LOW CONFIDENCE') : 'STANDBY'}
+          <span
+            className={
+              !showConfidence || isConfident ? 'text-[#d4a35f]' : 'text-[#e06c75]'
+            }
+          >
+            {currentChord
+              ? showConfidence
+                ? isConfident
+                  ? 'LIVE SIGNAL'
+                  : 'LOW CONFIDENCE'
+                : 'LIVE'
+              : 'STANDBY'}
           </span>
         </div>
 
-        {/* Big Root + Quality (Always visible; badged when <60%) */}
+        {/* Big Root + Quality */}
         <div className="my-auto py-3 text-center">
           {currentChord && currentParsed ? (
             <div className="flex flex-col items-center">
@@ -76,7 +92,7 @@ export default function ActiveChordDisplay({
                   /{currentParsed.bass}
                 </span>
               )}
-              {!isConfident && (
+              {showConfidence && !isConfident && (
                 <div className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-mono text-[#e06c75] border border-[#e06c75]/50 px-2.5 py-0.5 bg-[#e06c75]/15 uppercase tracking-wider font-bold">
                   <AlertTriangle className="w-3 h-3 text-[#e06c75]" />
                   <span>LOW CONFIDENCE ({currentConfidence}%) • VERIFY WITH AUDIO</span>
@@ -85,7 +101,7 @@ export default function ActiveChordDisplay({
             </div>
           ) : (
             <span className="text-3xl font-mono text-[#4a5761] uppercase tracking-widest">
-              AWAITING SIGNAL
+              READY
             </span>
           )}
         </div>
@@ -93,19 +109,25 @@ export default function ActiveChordDisplay({
         {/* Footer Metrics */}
         <div>
           <div className="flex items-center justify-between text-[11px] font-mono text-[#86949e] mb-1.5">
-            <div className="flex items-center gap-1">
-              {isConfident ? (
-                <ShieldCheck className="w-3.5 h-3.5 text-[#d4a35f]" />
-              ) : (
-                <AlertTriangle className="w-3.5 h-3.5 text-[#e06c75]" />
-              )}
-              <span>
-                CONFIDENCE:{' '}
-                <strong className={isConfident ? 'text-[#eceeed]' : 'text-[#e06c75]'}>
-                  {currentConfidence}%
-                </strong>
-              </span>
-            </div>
+            {showConfidence ? (
+              <div className="flex items-center gap-1">
+                {isConfident ? (
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#d4a35f]" />
+                ) : (
+                  <AlertTriangle className="w-3.5 h-3.5 text-[#e06c75]" />
+                )}
+                <span>
+                  CONFIDENCE:{' '}
+                  <strong className={isConfident ? 'text-[#eceeed]' : 'text-[#e06c75]'}>
+                    {currentConfidence}%
+                  </strong>
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 text-[#86949e]">
+                <span>AUDIO SYNC: REALTIME</span>
+              </div>
+            )}
             {currentChord && (
               <span>WINDOW: {formatTime(currentChord.startTime)} - {formatTime(currentChord.endTime)}</span>
             )}
@@ -114,7 +136,9 @@ export default function ActiveChordDisplay({
           {/* Solid Duration Bar */}
           <div className="w-full h-1 bg-[#14191d] overflow-hidden">
             <motion.div
-              className={`h-full ${isConfident ? 'bg-[#d4a35f]' : 'bg-[#4a5761]'}`}
+              className={`h-full ${
+                !showConfidence || isConfident ? 'bg-[#d4a35f]' : 'bg-[#4a5761]'
+              }`}
               style={{ width: `${progress * 100}%` }}
               transition={{ duration: 0.1, ease: 'linear' }}
             />
@@ -135,7 +159,7 @@ export default function ActiveChordDisplay({
         >
           <div className="flex items-center gap-1 text-[10px] font-mono text-[#86949e] uppercase mb-1">
             <ChevronLeft className="w-3 h-3 text-[#d4a35f]" />
-            <span>PRECEDING CHORD</span>
+            <span>PREVIOUS CHORD</span>
           </div>
           <div className="text-sm font-mono font-bold text-[#eceeed]">
             {previousChord ? previousChord.chord : '—'}
@@ -157,7 +181,7 @@ export default function ActiveChordDisplay({
           }`}
         >
           <div className="flex items-center justify-between text-[10px] font-mono text-[#86949e] uppercase mb-1">
-            <span>UPCOMING CHORD</span>
+            <span>NEXT CHORD</span>
             <ChevronRight className="w-3 h-3 text-[#d4a35f]" />
           </div>
           <div className="text-sm font-mono font-bold text-[#eceeed]">

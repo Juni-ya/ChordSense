@@ -24,6 +24,7 @@ export interface SongAnalysisResponse {
 export interface AnalyzeRequest {
   url: string;
   engine?: 'studio_master' | 'hybrid' | 'btc' | 'gemini';
+  apiKey?: string;
 }
 
 export interface VideoMetadata {

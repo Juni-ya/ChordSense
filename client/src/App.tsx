@@ -11,6 +11,7 @@ import PlayerSection from './components/PlayerSection';
 import ActiveChordDisplay from './components/ActiveChordDisplay';
 import ChordTimeline from './components/ChordTimeline';
 import TransposeControls from './components/TransposeControls';
+import ApiKeyModal from './components/ApiKeyModal';
 import { decodeAudioToPCM, analyzeAudioClientSide } from './services/localAnalyzer';
 
 const INITIAL_LOADING_STEPS: LoadingStep[] = [
@@ -32,12 +33,34 @@ export default function App() {
   const [syncOffset, setSyncOffset] = useState(0);
   const [accidentalPreference, setAccidentalPreference] = useState<AccidentalPreference>('sharp');
   const [filterPassingChords, setFilterPassingChords] = useState(true);
+  const [showConfidence, setShowConfidence] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [loadingSteps, setLoadingSteps] = useState<LoadingStep[]>(INITIAL_LOADING_STEPS);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lastSubmittedUrl, setLastSubmittedUrl] = useState<string>('');
+  const [apiKey, setApiKey] = useState<string>(() => {
+    try {
+      return localStorage.getItem('chordsense_gemini_api_key') || '';
+    } catch {
+      return '';
+    }
+  });
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
 
-  // Complete reset for "New Ingest"
+  const handleSaveApiKey = useCallback((newKey: string) => {
+    setApiKey(newKey);
+    try {
+      if (newKey) {
+        localStorage.setItem('chordsense_gemini_api_key', newKey);
+      } else {
+        localStorage.removeItem('chordsense_gemini_api_key');
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, []);
+
+  // Complete reset for "New Analysis"
   const handleNewAnalysis = useCallback(() => {
     setView('input');
     setAnalysis(null);
@@ -113,10 +136,20 @@ export default function App() {
 
     try {
       const apiBase = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (apiKey) {
+        headers['x-gemini-api-key'] = apiKey;
+      }
+
       const res = await fetch(`${apiBase}/api/analyze`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: submittedUrl, refresh, engine: selectedEngine }),
+        headers,
+        body: JSON.stringify({
+          url: submittedUrl,
+          refresh,
+          engine: selectedEngine,
+          apiKey: apiKey || undefined,
+        }),
       });
 
       clearTimeout(timer1);
@@ -161,7 +194,7 @@ export default function App() {
         prev.map((s) => (s.status === 'active' ? { ...s, status: 'error' } : s))
       );
     }
-  }, [audioUrl, engine]);
+  }, [audioUrl, engine, apiKey]);
 
   // 100% In-Browser Rust WebAssembly + WebGPU File Analysis
   const handleFileUpload = useCallback(async (file: File) => {
@@ -327,7 +360,19 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#08090a] text-[#eceeed]">
-      <Header onNewAnalysis={handleNewAnalysis} isWorkspace={view === 'workspace'} />
+      <Header
+        onNewAnalysis={handleNewAnalysis}
+        isWorkspace={view === 'workspace'}
+        hasApiKey={Boolean(apiKey)}
+        onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
+      />
+
+      <ApiKeyModal
+        isOpen={isApiKeyModalOpen}
+        onClose={() => setIsApiKeyModalOpen(false)}
+        apiKey={apiKey}
+        onSaveKey={handleSaveApiKey}
+      />
 
       <main className="flex-1 flex flex-col justify-center">
         <AnimatePresence mode="wait">
@@ -389,36 +434,37 @@ export default function App() {
 
                 <div>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <span className="telemetry-stamp text-[10px]">ACOUSTIC SPECIMEN</span>
                     <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#eceeed] uppercase">
                       {analysis.title}
                     </h2>
-                    <div
-                      className={`telemetry-stamp flex items-center gap-1.5 ${
-                        isLowAccuracy
-                          ? 'border-[#e06c75] text-[#e06c75] bg-[#e06c75]/10 font-bold'
-                          : 'telemetry-stamp-active'
-                      }`}
-                      title={
-                        isLowAccuracy
-                          ? `Warning: Overall detection accuracy is ${avgConfidence}% (<60%). Output may be inaccurate.`
-                          : `Model confidence: ${avgConfidence}% average accuracy across detected chords`
-                      }
-                    >
-                      {isLowAccuracy ? (
-                        <AlertTriangle className="w-3.5 h-3.5 text-[#e06c75]" />
-                      ) : (
-                        <ShieldCheck className="w-3.5 h-3.5 text-[#d4a35f]" />
-                      )}
-                      <span>
-                        {isLowAccuracy ? `LOW ACCURACY: ${avgConfidence}%` : `LOCK: ≥60% • ${avgConfidence}% AVG`}
-                      </span>
-                    </div>
+                    {showConfidence && (
+                      <div
+                        className={`telemetry-stamp flex items-center gap-1.5 ${
+                          isLowAccuracy
+                            ? 'border-[#e06c75] text-[#e06c75] bg-[#e06c75]/10 font-bold'
+                            : 'telemetry-stamp-active'
+                        }`}
+                        title={
+                          isLowAccuracy
+                            ? `Warning: Overall detection accuracy is ${avgConfidence}% (<60%). Output may be inaccurate.`
+                            : `Model confidence: ${avgConfidence}% average accuracy across detected chords`
+                        }
+                      >
+                        {isLowAccuracy ? (
+                          <AlertTriangle className="w-3.5 h-3.5 text-[#e06c75]" />
+                        ) : (
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#d4a35f]" />
+                        )}
+                        <span>
+                          {isLowAccuracy ? `LOW ACCURACY: ${avgConfidence}%` : `LOCK: ≥60% • ${avgConfidence}% AVG`}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {analysis.artist && (
                     <p className="text-xs font-mono text-[#86949e] mt-1 uppercase tracking-wider">
-                      SOURCE: {analysis.artist}
+                      ARTIST: {analysis.artist}
                     </p>
                   )}
 
@@ -426,15 +472,15 @@ export default function App() {
                     <span className="telemetry-stamp text-[#d4a35f]">♩ {analysis.bpm} BPM</span>
                     <span className="telemetry-stamp">{analysis.timeSignature} TIME</span>
                     <span className="telemetry-stamp">
-                      {displayChords.length} DETECTED NODES
+                      {displayChords.length} CHORDS
                     </span>
                     <span className="telemetry-stamp text-[#eceeed]">
-                      ENGINE: {analysis.engine === 'studio_master' ? 'STUDIO MASTER (DEMUCS + BTC + BASS + GEMINI)' : analysis.engine === 'hybrid' ? 'HYBRID CONSENSUS (BTC + GEMINI)' : analysis.engine === 'gemini' ? 'GEMINI 2.5 FLASH' : 'BTC NEURAL MODEL'}
+                      ENGINE: {analysis.engine === 'studio_master' ? 'STUDIO MASTER' : analysis.engine === 'gemini' ? 'GEMINI 2.5 FLASH' : 'BTC NEURAL MODEL'}
                     </span>
                   </div>
                 </div>
 
-                {/* Session Actions */}
+                {/* Session Actions (Only Re-analyze here; New Song is in Header) */}
                 <div className="flex items-center gap-2 shrink-0">
                   {!audioUrl && (
                     <button
@@ -453,21 +499,11 @@ export default function App() {
                       <span>RE-ANALYZE</span>
                     </button>
                   )}
-
-                  <button
-                    type="button"
-                    onClick={handleNewAnalysis}
-                    title="Clear current specimen and ingest another track"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#d4a35f] hover:bg-[#e5c07b] text-black text-xs font-mono font-bold tracking-wider transition-colors cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                    <span>NEW INGEST</span>
-                  </button>
                 </div>
               </div>
 
-              {/* Low Accuracy Warning Banner (< 60%) */}
-              {isLowAccuracy && (
+              {/* Low Accuracy Warning Banner (< 60%) - only shown when confidence labels are enabled */}
+              {showConfidence && isLowAccuracy && (
                 <div className="cinema-letterbox p-3.5 bg-[rgba(224,108,117,0.12)] border border-[#e06c75] text-[#eceeed] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
                   <div className="flex items-start sm:items-center gap-2.5">
                     <div className="w-6 h-6 flex items-center justify-center bg-[#e06c75]/20 border border-[#e06c75] text-[#e06c75] shrink-0 font-bold">
@@ -488,7 +524,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* The Glass Chamber (Split Showcase: Video + Active Specimen) */}
+              {/* Video + Active Chord Showcase */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
                 {/* Widescreen Video Specimen (7 cols on desktop) */}
                 <div className="lg:col-span-7">
@@ -500,7 +536,7 @@ export default function App() {
                   />
                 </div>
 
-                {/* Active Chord Specimen Monolith (5 cols on desktop) */}
+                {/* Active Chord Display (5 cols on desktop) */}
                 <div className="lg:col-span-5">
                   <ActiveChordDisplay
                     previousChord={previousChord}
@@ -509,11 +545,12 @@ export default function App() {
                     currentTime={effectiveTime}
                     accidentalPreference={accidentalPreference}
                     onSeek={handleSeek}
+                    showConfidence={showConfidence}
                   />
                 </div>
               </div>
 
-              {/* Calibration Control Deck & Continuous Spectrographic Stream */}
+              {/* Calibration Control Deck & Continuous Chord Stream */}
               <div className="space-y-4">
                 {/* Tactical Telemetry Console */}
                 <div className="cinema-letterbox p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -523,11 +560,13 @@ export default function App() {
                     syncOffset={syncOffset}
                     accidentalPreference={accidentalPreference}
                     filterPassingChords={filterPassingChords}
+                    showConfidence={showConfidence}
                     onTransposeChange={setTranspose}
                     onCapoChange={setCapo}
                     onSyncOffsetChange={setSyncOffset}
                     onAccidentalPreferenceChange={setAccidentalPreference}
                     onFilterPassingChordsChange={setFilterPassingChords}
+                    onShowConfidenceChange={setShowConfidence}
                     songKey={displayKey}
                     suggestedCapo={analysis.suggestedCapo}
                   />
@@ -543,12 +582,12 @@ export default function App() {
                     }`}
                   >
                     <span className={`w-1.5 h-1.5 ${autoScroll ? 'bg-[#d4a35f]' : 'bg-[#4a5761]'}`} />
-                    <span>SPECTROGRAM AUTO-TRACK</span>
+                    <span>AUTO-SCROLL</span>
                     {autoScroll && <Check className="w-3 h-3 stroke-[3]" />}
                   </button>
                 </div>
 
-                {/* Continuous Chronological Spectrographic Ribbon */}
+                {/* Continuous Chronological Chord Progression Tape */}
                 <div className="cinema-letterbox bracket-container p-4">
                   <div className="bracket-tl" />
                   <div className="bracket-tr" />
@@ -558,10 +597,10 @@ export default function App() {
                   <div className="flex items-center justify-between mb-3 text-[11px] font-mono border-b border-[#2a333a] pb-2">
                     <div className="flex items-center gap-2">
                       <Disc className="w-3.5 h-3.5 text-[#d4a35f]" />
-                      <span className="font-bold text-[#eceeed] uppercase">CHRONOLOGICAL HARMONIC PROGRESSION TAPE</span>
+                      <span className="font-bold text-[#eceeed] uppercase">CHORD PROGRESSION</span>
                     </div>
                     <div className="text-[#86949e]">
-                      NODES: <strong className="text-[#eceeed]">{displayChords.length}</strong>
+                      CHORDS: <strong className="text-[#eceeed]">{displayChords.length}</strong>
                     </div>
                   </div>
 
@@ -572,6 +611,7 @@ export default function App() {
                     autoScroll={autoScroll}
                     accidentalPreference={accidentalPreference}
                     minConfidence={minConfidence}
+                    showConfidence={showConfidence}
                   />
                 </div>
               </div>
