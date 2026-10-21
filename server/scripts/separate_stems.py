@@ -3,7 +3,9 @@ import sys
 import json
 import torch
 
-ffmpeg_dir = os.path.abspath("server/node_modules/ffmpeg-static")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Check local server/node_modules/ffmpeg-static
+ffmpeg_dir = os.path.abspath(os.path.join(script_dir, "..", "node_modules", "ffmpeg-static"))
 if os.path.exists(ffmpeg_dir):
     os.environ["PATH"] = ffmpeg_dir + os.pathsep + os.environ.get("PATH", "")
 

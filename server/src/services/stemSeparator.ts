@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import fsSync from 'fs';
 import os from 'os';
+import ffmpeg from 'ffmpeg-static';
 
 export interface SeparatedStems {
   other: string; // Guitars, keys, piano, synths (100% free of bass, drums, vocals)
@@ -48,11 +49,17 @@ export async function separateStems(audioPath: string, videoId: string): Promise
 
   console.log(`[stemSeparator] Running Meta HTDemucs on ${audioPath} (saving to ${stemsBaseDir})...`);
 
+  const ffmpegDir = ffmpeg ? path.dirname(ffmpeg) : '';
+  const extendedPath = ffmpegDir
+    ? `${ffmpegDir}${path.delimiter}${process.env.PATH || ''}`
+    : process.env.PATH;
+
   return new Promise((resolve, reject) => {
     const proc = spawn('python', [resolvedScript, audioPath, stemsBaseDir], {
       stdio: ['ignore', 'pipe', 'pipe'],
       env: {
         ...process.env,
+        PATH: extendedPath,
         PYTHONIOENCODING: 'utf-8',
       },
     });

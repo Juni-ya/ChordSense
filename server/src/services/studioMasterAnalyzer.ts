@@ -133,10 +133,10 @@ export async function analyzeStudioMaster(
       }
     }
 
-    // Check if Gemini detected a rich extension (e.g. Cmaj7 instead of C, or Am7 instead of Am)
-    if (geminiResult && chordName !== 'N.C.') {
+    // Cross-check with Gemini Musicological Intelligence & Tab Ground Truth
+    if (chordName !== 'N.C.') {
       const midPoint = (seg.startTime + seg.endTime) / 2;
-      const matchingGemini = geminiResult.chords.find(
+      const matchingGemini = geminiResult?.chords.find(
         (g) => midPoint >= g.startTime && midPoint < g.endTime
       );
 
@@ -145,12 +145,36 @@ export async function analyzeStudioMaster(
         const bRootPc = pitchClassOf(parsed.root);
         const gRootPc = pitchClassOf(gParsed.root);
 
-        // If roots match and Gemini has a 7th/sus extension, adopt the richer voicing!
         if (bRootPc !== null && gRootPc !== null && bRootPc === gRootPc) {
+          // If roots match and Gemini detected a rich extension (7th/sus/9), adopt the richer voicing!
           if (gParsed.quality.includes('7') || gParsed.quality.includes('sus') || gParsed.quality.includes('9')) {
             chordName = `${parsed.root}${gParsed.quality}${parsed.bass ? '/' + parsed.bass : (gParsed.bass ? '/' + gParsed.bass : '')}`;
             parsed = parseChordDetails(chordName);
           }
+          // If BTC heard minor (e.g. Bm due to vocal bleed) but Gemini heard Major (B), adopt Gemini's major voicing
+          else if (parsed.quality.startsWith('m') && !gParsed.quality.startsWith('m')) {
+            chordName = `${parsed.root}${parsed.bass ? '/' + parsed.bass : ''}`;
+            parsed = parseChordDetails(chordName);
+          }
+        }
+      }
+
+      // Tab Grounding Ground Truth: If the song's score only contains Major on this root (e.g. B, but not Bm)
+      if (tabGrounding?.verifiedChords && tabGrounding.verifiedChords.length > 0) {
+        const hasMajor = tabGrounding.verifiedChords.includes(parsed.root);
+        const hasMinor = tabGrounding.verifiedChords.includes(`${parsed.root}m`);
+
+        // If BTC detected minor (e.g. Bm), but the song only uses Major (B):
+        if (parsed.quality.startsWith('m') && hasMajor && !hasMinor) {
+          console.log(`[studioMaster] Ground score override: corrected vocal bleed "${chordName}" -> "${parsed.root}" (song score only uses ${parsed.root}).`);
+          chordName = `${parsed.root}${parsed.bass ? '/' + parsed.bass : ''}`;
+          parsed = parseChordDetails(chordName);
+        }
+        // If BTC detected Major, but the song only uses Minor:
+        else if (!parsed.quality.startsWith('m') && hasMinor && !hasMajor) {
+          console.log(`[studioMaster] Ground score override: corrected "${chordName}" -> "${parsed.root}m" (song score only uses ${parsed.root}m).`);
+          chordName = `${parsed.root}m${parsed.bass ? '/' + parsed.bass : ''}`;
+          parsed = parseChordDetails(chordName);
         }
       }
     }

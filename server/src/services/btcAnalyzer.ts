@@ -293,8 +293,9 @@ export async function analyzeWithBTC(
   // 6. Pass 2: Diatonic & Tab-guided final decode
   // When verified chords are known from Ultimate-Guitar tab grounding (e.g. G, B, C, Cm for Creep):
   // We apply Bayesian logit/probability weighting:
-  // - Verified song chords (groundIndices) get boosted (2.40x).
-  // - In-key diatonic chords (diatonicIndices) get 1.15x.
+  // - Verified song chords (groundIndices) get boosted (2.60x).
+  // - Opposite quality on a verified root (e.g. Bm when B is verified, or C when Cm is verified alone) is heavily penalized (0.15x).
+  // - Non-grounded diatonic chords get (0.85x) so they cannot usurp verified chords.
   // - Non-grounded, non-diatonic chords (out-of-key bass transient notes) get attenuated (0.35x).
   const hasGrounding = groundIndices.size > 0;
   const finalFrames = [];
@@ -306,11 +307,23 @@ export async function analyzeWithBTC(
       let p = smoothedProbs[f * 25 + c];
       if (hasGrounding) {
         if (groundIndices.has(c)) {
-          p *= 2.40;
-        } else if (diatonicIndices.has(c)) {
-          p *= 1.15;
+          p *= 2.60;
         } else {
-          p *= 0.40;
+          const chordLabel = BTC_LABELS[c];
+          const isMinor = chordLabel.endsWith('m');
+          const rootNote = isMinor ? chordLabel.slice(0, -1) : chordLabel;
+          const oppChord = isMinor ? rootNote : `${rootNote}m`;
+          const hasOppInGround = groundChordNames.has(oppChord);
+          const hasSelfInGround = groundChordNames.has(chordLabel);
+
+          // If opposite quality is verified but this quality is NOT in the song chart (e.g. Bm when B is verified):
+          if (hasOppInGround && !hasSelfInGround) {
+            p *= 0.15;
+          } else if (diatonicIndices.has(c)) {
+            p *= 0.85;
+          } else {
+            p *= 0.35;
+          }
         }
       } else {
         if (diatonicIndices.has(c)) {
