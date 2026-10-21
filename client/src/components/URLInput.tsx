@@ -1,6 +1,6 @@
 import { useState, useRef, type FormEvent, type DragEvent, type ChangeEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Link, Clipboard, Play, Upload, FileAudio, Youtube, Cpu, Compass, Sparkles, Zap } from 'lucide-react';
+import { Link, Clipboard, Play, Upload, FileAudio, Youtube, Sparkles, Key, CheckCircle2, ExternalLink, AlertTriangle } from 'lucide-react';
 import { DEMO_VIDEOS } from '../utils/mockData';
 import type { DetectionEngine } from '../types';
 
@@ -8,6 +8,8 @@ interface URLInputProps {
   onSubmit: (url: string, engine: DetectionEngine) => void;
   onFileUpload: (file: File) => void;
   isLoading: boolean;
+  apiKey?: string;
+  onOpenApiKeyModal?: () => void;
 }
 
 function extractVideoId(input: string): string | null {
@@ -42,7 +44,13 @@ function extractVideoId(input: string): string | null {
 
 export { extractVideoId };
 
-export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInputProps) {
+export default function URLInput({
+  onSubmit,
+  onFileUpload,
+  isLoading,
+  apiKey,
+  onOpenApiKeyModal,
+}: URLInputProps) {
   const [tab, setTab] = useState<'youtube' | 'file'>('youtube');
   const [url, setUrl] = useState('');
   const [engine, setEngine] = useState<DetectionEngine>('studio_master');
@@ -52,6 +60,10 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (!apiKey) {
+      onOpenApiKeyModal?.();
+      return;
+    }
     const videoId = extractVideoId(url);
     if (!videoId) {
       setError('SIGNAL REJECTED: INVALID YOUTUBE URL FORMAT');
@@ -62,6 +74,7 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
   };
 
   const handlePaste = async () => {
+    if (!apiKey) return;
     try {
       const text = await navigator.clipboard.readText();
       setUrl(text);
@@ -72,6 +85,10 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
   };
 
   const handleDemo = (videoId: string) => {
+    if (!apiKey) {
+      onOpenApiKeyModal?.();
+      return;
+    }
     const demoUrl = `https://www.youtube.com/watch?v=${videoId}`;
     setUrl(demoUrl);
     setError('');
@@ -121,7 +138,10 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
             Identify Chords from Any Song
           </h1>
           <p className="text-[#86949e] text-sm sm:text-base font-normal max-w-lg mx-auto">
-            Paste a YouTube link or upload an audio file to extract real-time guitar and piano chords with studio accuracy.
+            Paste a YouTube link or upload an audio file to extract synchronized guitar and piano chords with studio accuracy.
+          </p>
+          <p className="text-[#657683] text-xs font-mono mt-2 max-w-lg mx-auto">
+            💡 Best results on rhythm guitar and acoustic piano. Not recommended for electronic music, dense synth pads, or 808 sub-bass.
           </p>
         </div>
 
@@ -250,9 +270,73 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
                 </div>
               </div>
 
+              {/* Highly Visible API Key Card */}
+              {!apiKey ? (
+                <div className="mb-4 p-4 bg-[#141009] border-2 border-[#d4a35f] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono shadow-[0_0_25px_rgba(212,163,95,0.15)]">
+                  <div className="flex items-start sm:items-center gap-3">
+                    <div className="w-8 h-8 rounded bg-[#d4a35f]/20 border border-[#d4a35f] flex items-center justify-center shrink-0 text-[#d4a35f]">
+                      <Key className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-[#d4a35f] text-sm uppercase tracking-wider flex items-center gap-2">
+                        <span>API KEY REQUIRED</span>
+                        <span className="text-[9px] px-1.5 py-0.5 bg-[#d4a35f] text-black font-extrabold">REQUIRED TO UNLOCK</span>
+                      </div>
+                      <p className="text-[#a2b0b9] text-[11px] mt-0.5">
+                        Please insert your Google Gemini API key. The YouTube input below unlocks immediately once entered.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={onOpenApiKeyModal}
+                      className="px-4 py-2 bg-[#d4a35f] hover:bg-[#e5c07b] text-black font-extrabold text-xs uppercase tracking-wider cursor-pointer transition-colors shadow-md flex items-center gap-1.5"
+                    >
+                      <Key className="w-3.5 h-3.5 fill-black" />
+                      <span>ENTER API KEY</span>
+                    </button>
+                    <a
+                      href="https://aistudio.google.com/apikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 border border-[#2a333a] bg-[#08090a] text-[#86949e] hover:text-[#d4a35f] hover:border-[#d4a35f] transition-colors"
+                      title="Get free API key at Google AI Studio"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-4 px-3.5 py-2.5 bg-[#0b120e] border border-[#22402c] flex items-center justify-between gap-3 text-xs font-mono">
+                  <div className="flex items-center gap-2 text-[#4ade80]">
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-[#4ade80]" />
+                    <span className="font-bold uppercase tracking-wider">GEMINI API KEY ACTIVE</span>
+                    <span className="text-[#657683] text-[11px] font-mono hidden sm:inline">
+                      ({apiKey.slice(0, 6)}••••••••)
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onOpenApiKeyModal}
+                    className="text-[#86949e] hover:text-[#eceeed] hover:underline text-[11px] cursor-pointer"
+                  >
+                    Change Key
+                  </button>
+                </div>
+              )}
+
+              {/* YouTube URL Input Form (Greyed out if no API key) */}
               <form onSubmit={handleSubmit} className="relative">
-                <div className="bg-[#08090a] border border-[#2a333a] focus-within:border-[#d4a35f] transition-colors flex items-center p-1.5">
-                  <Link className="w-4 h-4 text-[#4a5761] ml-3 shrink-0" />
+                <div
+                  className={`border transition-all flex items-center p-1.5 ${
+                    !apiKey
+                      ? 'bg-[#090b0d] border-[#1e252b] opacity-45 cursor-not-allowed select-none'
+                      : 'bg-[#08090a] border-[#2a333a] focus-within:border-[#d4a35f]'
+                  }`}
+                  onClick={!apiKey ? onOpenApiKeyModal : undefined}
+                >
+                  <Link className={`w-4 h-4 ml-3 shrink-0 ${!apiKey ? 'text-[#35414b]' : 'text-[#4a5761]'}`} />
                   <input
                     type="text"
                     value={url}
@@ -260,23 +344,43 @@ export default function URLInput({ onSubmit, onFileUpload, isLoading }: URLInput
                       setUrl(e.target.value);
                       setError('');
                     }}
-                    placeholder="ENTER YOUTUBE SIGNAL URL..."
-                    className="flex-1 bg-transparent px-3 py-2.5 text-[#eceeed] placeholder:text-[#4a5761] font-mono text-xs sm:text-sm focus:outline-none"
-                    disabled={isLoading}
+                    placeholder={
+                      !apiKey
+                        ? 'INPUT LOCKED // INSERT API KEY ABOVE TO UNLOCK...'
+                        : 'ENTER YOUTUBE URL (E.G. HTTPS://WWW.YOUTUBE.COM/WATCH?V=...)'
+                    }
+                    className={`flex-1 bg-transparent px-3 py-2.5 font-mono text-xs sm:text-sm focus:outline-none ${
+                      !apiKey
+                        ? 'text-[#4a5761] placeholder:text-[#3f4b55] cursor-not-allowed'
+                        : 'text-[#eceeed] placeholder:text-[#4a5761]'
+                    }`}
+                    disabled={isLoading || !apiKey}
                   />
                   <button
                     type="button"
                     onClick={handlePaste}
-                    className="p-2 text-[#86949e] hover:text-[#eceeed] hover:bg-[#14191d] transition-colors"
-                    title="Paste from clipboard"
+                    disabled={isLoading || !apiKey}
+                    className={`p-2 transition-colors ${
+                      !apiKey
+                        ? 'text-[#35414b] cursor-not-allowed'
+                        : 'text-[#86949e] hover:text-[#eceeed] hover:bg-[#14191d] cursor-pointer'
+                    }`}
+                    title={!apiKey ? 'Enter API Key first' : 'Paste from clipboard'}
                     aria-label="Paste from clipboard"
                   >
                     <Clipboard className="w-4 h-4" />
                   </button>
                   <button
                     type="submit"
-                    disabled={isLoading || !url.trim()}
-                    className="px-5 py-2.5 bg-[#d4a35f] hover:bg-[#e5c07b] disabled:bg-[#14191d] disabled:text-[#4a5761] text-black font-mono font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
+                    disabled={isLoading || !apiKey || !url.trim()}
+                    className={`px-5 py-2.5 font-mono font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-1.5 shrink-0 ${
+                      !apiKey
+                        ? 'bg-[#14191d] text-[#4a5761] border border-[#1e252b] cursor-not-allowed'
+                        : !url.trim()
+                        ? 'bg-[#14191d] text-[#4a5761] cursor-not-allowed'
+                        : 'bg-[#d4a35f] hover:bg-[#e5c07b] text-black cursor-pointer'
+                    }`}
+                    title={!apiKey ? 'API Key required to unlock analysis' : undefined}
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
                     <span>DECODE</span>

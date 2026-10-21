@@ -16,26 +16,17 @@ Paste any YouTube URL or drop a local audio file, and ChordSense isolates the mu
   Analyzes the isolated bass fundamental ($F_0$) to identify authentic slash chords ($G/B, C/E, D/F\#$).
 * **Harmonic Dwell & Chromatic Passing-Tone Filter:**
   Automatically filters out transient half-step chromatic slides and vocal glides ($< 1.35\text{s}$) to produce clean, professional rhythm charts.
-* **Denis Villeneuve *Arrival*-Inspired Aesthetic:**
-  Minimalist brutalist monochrome aesthetic with high-contrast amber telemetry accents, bracket frames, and real-time playback synchronization.
 * **Interactive Player Controls:**
   Interactive transposing ($\pm 12$ semitones), Enharmonic toggle ($\sharp$ Sharp vs $\flat$ Flat), Capo calculation, and Micro-timing sync adjustment ($\pm 0.2\text{s}$).
 
 ---
 
-## 🏗️ Architecture
+## ⚠️ Recommended Songs & Limitations
 
-```
-client/          → React 18 + Vite + TypeScript + Tailwind CSS (Vercel Ready)
-server/          → Express + TypeScript + Demucs + ONNX Runtime (Render/Railway Ready)
-  ├── models/btc.onnx                  (Pre-trained 4.9MB BTC Transformer)
-  ├── scripts/separate_stems.py        (Meta HTDemucs stem separation runner)
-  ├── src/services/stemSeparator.ts    (Audio stem caching & isolation orchestrator)
-  ├── src/services/studioMasterAnalyzer.ts (4-stage Studio Master synthesis)
-  ├── src/services/bassTracker.ts      (Low-frequency bass fundamental tracker)
-  ├── src/services/btcAnalyzer.ts      (CQT + ONNX inference on clean stems)
-  └── src/services/tabRetriever.ts     (Verified score grounding)
-```
+* **Optimal Accuracy (Rhythm Guitar & Piano-Driven Tracks):**
+  ChordSense delivers its highest precision on songs featuring prominent rhythm guitar (acoustic or electric) or acoustic piano. Clear acoustic chord strumming and rhythmic comping allow the stem separator and BTC neural model to lock onto harmonic changes with maximum accuracy.
+* **Not Recommended for Electronic Music:**
+  It is **not recommended** to input electronic music (EDM, synthwave, techno), heavily modulated synth patches, detuned 808 sub-bass glides, or ambient soundscapes. Synthetic modulation, heavy sidechain pumping, and non-harmonic frequency sweeps will confuse the neural chord detection pipeline.
 
 ---
 

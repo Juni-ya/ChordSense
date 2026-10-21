@@ -47,12 +47,12 @@ export default function Header({
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono border transition-colors cursor-pointer ${
                 hasApiKey
                   ? 'bg-[rgba(212,163,95,0.12)] border-[#d4a35f] text-[#d4a35f] font-semibold'
-                  : 'bg-[#14191d] border-[#2a333a] text-[#86949e] hover:border-[#4a5761] hover:text-[#eceeed]'
+                  : 'bg-[#d4a35f]/15 border-[#d4a35f] text-[#d4a35f] hover:bg-[#d4a35f]/25 font-bold shadow-[0_0_12px_rgba(212,163,95,0.2)]'
               }`}
               title="Configure personal Gemini API Key"
             >
               <Key className="w-3 h-3" />
-              <span>{hasApiKey ? 'KEY ACTIVE' : 'API KEY'}</span>
+              <span>{hasApiKey ? 'KEY ACTIVE' : '+ SET API KEY'}</span>
             </button>
           )}
 

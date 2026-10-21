@@ -390,6 +390,8 @@ export default function App() {
                 onSubmit={handleSubmit}
                 onFileUpload={handleFileUpload}
                 isLoading={false}
+                apiKey={apiKey}
+                onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
               />
             </motion.div>
           )}
