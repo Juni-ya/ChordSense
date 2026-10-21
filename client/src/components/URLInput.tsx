@@ -66,7 +66,7 @@ export default function URLInput({
     }
     const videoId = extractVideoId(url);
     if (!videoId) {
-      setError('SIGNAL REJECTED: INVALID YOUTUBE URL FORMAT');
+      setError('Please enter a valid YouTube link');
       return;
     }
     setError('');
@@ -101,7 +101,7 @@ export default function URLInput({
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
       if (!file.type.startsWith('audio/') && !file.name.match(/\.(mp3|wav|m4a|aac|ogg|flac)$/i)) {
-        setError('UNSUPPORTED AUDIO CODEC. REQUIRE MP3, WAV, M4A, OR FLAC.');
+        setError('Unsupported audio format. Please upload an MP3, WAV, M4A, or FLAC file.');
         return;
       }
       setError('');
@@ -119,7 +119,7 @@ export default function URLInput({
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
-      {/* Anamorphic Letterbox Chamber Frame */}
+      {/* Letterbox Frame */}
       <div className="cinema-letterbox bracket-container p-6 sm:p-10">
         <div className="bracket-tl" />
         <div className="bracket-tr" />
@@ -130,18 +130,18 @@ export default function URLInput({
         <div className="text-center max-w-2xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 mb-3">
             <span className="telemetry-stamp telemetry-stamp-active">
-              STUDIO MASTER AI
+              CHORDSENSE
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#eceeed] mb-2 uppercase">
-            Identify Chords from Any Song
+            Identify Guitar & Piano Chords
           </h1>
           <p className="text-[#86949e] text-sm sm:text-base font-normal max-w-lg mx-auto">
-            Paste a YouTube link or upload an audio file to extract synchronized guitar and piano chords with studio accuracy.
+            Paste a YouTube link or upload an audio file to view synchronized chords.
           </p>
           <p className="text-[#657683] text-xs font-mono mt-2 max-w-lg mx-auto">
-            💡 Best results on rhythm guitar and acoustic piano. Not recommended for electronic music, dense synth pads, or 808 sub-bass.
+            💡 Best results on rhythm guitar and acoustic piano (~80-85% accuracy). Note: output may occasionally confuse Major and Minor chords with strong vocal melodies. Not recommended for electronic music or heavy distortion.
           </p>
         </div>
 
@@ -192,21 +192,21 @@ export default function URLInput({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
             >
-              {/* Studio Master Architecture Controller */}
+              {/* Detection Engine Selector */}
               <div className="mb-6 border border-[#2a333a] bg-[#0c0f11] p-3 sm:p-5">
                 <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#1e252b] text-[10px] font-mono uppercase tracking-wider">
                   <div className="flex items-center gap-2 text-[#eceeed]">
                     <Sparkles className="w-4 h-4 text-[#d4a35f]" />
-                    <span className="font-bold text-xs tracking-wider">STUDIO MASTER PIPELINE</span>
+                    <span className="font-bold text-xs tracking-wider">DETECTION ENGINE</span>
                   </div>
                   <div className="flex items-center gap-2 text-[#86949e]">
                     <span className="text-[#d4a35f] font-bold">
-                      {engine === 'studio_master' ? 'MAX ACCURACY' : 'FAST PREVIEW'}
+                      {engine === 'studio_master' ? 'FULL PIPELINE' : 'FAST PREVIEW'}
                     </span>
                   </div>
                 </div>
 
-                {/* Primary Mode: Studio Master (Demucs + BTC + Bass Tracker) */}
+                {/* Primary Mode: Full Analysis (Demucs + BTC + Bass Tracker) */}
                 <div className="space-y-3">
                   <div
                     onClick={() => setEngine('studio_master')}
@@ -219,7 +219,7 @@ export default function URLInput({
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm font-black tracking-wide text-[#eceeed]">
-                          ★ STUDIO MASTER (STEM SEPARATION &amp; BASS TRACKING)
+                          ★ FULL ANALYSIS (STEM SEPARATION &amp; BASS TRACKING)
                         </span>
                         <span className="text-[9px] font-mono px-2 py-0.5 bg-[#d4a35f] text-black font-extrabold uppercase tracking-widest">
                           ACTIVE
@@ -231,40 +231,40 @@ export default function URLInput({
                       Isolates guitars and piano from basslines and drums using Meta HTDemucs, tracks true bass roots for slash chords ($G/B, C/E$), and filters out passing tone blips.
                     </p>
 
-                    {/* 4-Stage Architectural Flowchart */}
+                    {/* 4-Stage Flowchart */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-[#1e252b] text-[10px] font-mono">
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 1</span>
                         <span className="text-[#eceeed] font-medium block">Stem Separation</span>
-                        <span className="text-[#657683] text-[9px]">Guitars/keys isolated</span>
+                        <span className="text-[#657683] text-[9px]">Isolates guitar &amp; piano</span>
                       </div>
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 2</span>
-                        <span className="text-[#eceeed] font-medium block">BTC Harmonics</span>
-                        <span className="text-[#657683] text-[9px]">Downbeat sync</span>
+                        <span className="text-[#eceeed] font-medium block">Chord Detection</span>
+                        <span className="text-[#657683] text-[9px]">Aligns to rhythm</span>
                       </div>
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 3</span>
                         <span className="text-[#eceeed] font-medium block">Bass Tracking</span>
-                        <span className="text-[#657683] text-[9px]">Slash chords (G/B, C/E)</span>
+                        <span className="text-[#657683] text-[9px]">Detects bass notes</span>
                       </div>
                       <div className="p-2 bg-[#090c0e] border border-[#1e252b]">
                         <span className="text-[#d4a35f] block font-bold mb-0.5">STAGE 4</span>
-                        <span className="text-[#eceeed] font-medium block">AI Synthesis</span>
-                        <span className="text-[#657683] text-[9px]">Rich 7th extensions</span>
+                        <span className="text-[#eceeed] font-medium block">Refinement</span>
+                        <span className="text-[#657683] text-[9px]">Verifies chords</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Secondary Instant Test Toggle */}
                   <div className="flex items-center justify-between text-xs font-mono text-[#86949e] px-1">
-                    <span className="text-[11px]">Need 3-second quick result instead?</span>
+                    <span className="text-[11px]">Need a quick 3-second result instead?</span>
                     <button
                       type="button"
                       onClick={() => setEngine(engine === 'btc' ? 'studio_master' : 'btc')}
                       className="text-[#d4a35f] hover:underline cursor-pointer flex items-center gap-1 text-[11px]"
                     >
-                      {engine === 'btc' ? '← Switch to Studio Master' : '⚡ Quick Preview (BTC Raw)'}
+                      {engine === 'btc' ? '← Switch to Full Analysis' : '⚡ Quick Preview (Fast)'}
                     </button>
                   </div>
                 </div>
@@ -346,8 +346,8 @@ export default function URLInput({
                     }}
                     placeholder={
                       !apiKey
-                        ? 'INPUT LOCKED // INSERT API KEY ABOVE TO UNLOCK...'
-                        : 'ENTER YOUTUBE URL (E.G. HTTPS://WWW.YOUTUBE.COM/WATCH?V=...)'
+                        ? 'Please enter your Gemini API key above to unlock...'
+                        : 'Enter YouTube link (e.g. https://www.youtube.com/watch?v=...)'
                     }
                     className={`flex-1 bg-transparent px-3 py-2.5 font-mono text-xs sm:text-sm focus:outline-none ${
                       !apiKey
@@ -383,14 +383,14 @@ export default function URLInput({
                     title={!apiKey ? 'API Key required to unlock analysis' : undefined}
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>DECODE</span>
+                    <span>ANALYZE</span>
                   </button>
                 </div>
               </form>
 
-              {/* Sample Telemetry Nodes */}
+              {/* Sample Demo Buttons */}
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                <span className="text-[11px] font-mono text-[#4a5761] mr-1">CALIBRATION SIGNALS:</span>
+                <span className="text-[11px] font-mono text-[#4a5761] mr-1">TRY A DEMO:</span>
                 {DEMO_VIDEOS.map((demo) => (
                   <button
                     key={demo.id}
@@ -435,10 +435,10 @@ export default function URLInput({
                   <FileAudio className="w-5 h-5" />
                 </div>
                 <h2 className="text-sm font-mono font-bold text-[#eceeed] mb-1 uppercase tracking-wide">
-                  DROP AUDIO FILE OR <span className="text-[#d4a35f] underline">BROWSE LOCAL STORAGE</span>
+                  DROP AUDIO FILE OR <span className="text-[#d4a35f] underline">CHOOSE A FILE</span>
                 </h2>
                 <p className="text-xs font-mono text-[#86949e] max-w-sm mx-auto">
-                  100% IN-BROWSER EXECUTION VIA RUST CQT WEBASSEMBLY &amp; WEBGPU TENSORS
+                  Supports MP3, WAV, M4A, and FLAC audio files
                 </p>
               </div>
             </motion.div>

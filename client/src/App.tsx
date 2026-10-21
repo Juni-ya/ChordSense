@@ -15,10 +15,10 @@ import ApiKeyModal from './components/ApiKeyModal';
 import { decodeAudioToPCM, analyzeAudioClientSide } from './services/localAnalyzer';
 
 const INITIAL_LOADING_STEPS: LoadingStep[] = [
-  { id: 'extract', label: 'Stage 1 // Ingesting audio stream...', status: 'pending' },
-  { id: 'stems', label: 'Stage 2 // Meta HTDemucs stem separation (isolating guitars/piano)...', status: 'pending' },
-  { id: 'btc', label: 'Stage 3 // BTC Transformer harmonic analysis (zero bass bleed)...', status: 'pending' },
-  { id: 'master', label: 'Stage 4 // Bass inversion tracking & multimodal AI synthesis...', status: 'pending' },
+  { id: 'extract', label: '1. Loading audio stream...', status: 'pending' },
+  { id: 'stems', label: '2. Isolating rhythm guitar and piano...', status: 'pending' },
+  { id: 'btc', label: '3. Detecting chords...', status: 'pending' },
+  { id: 'master', label: '4. Finalizing chord progression...', status: 'pending' },
 ];
 
 export default function App() {
@@ -104,10 +104,10 @@ export default function App() {
     }
 
     setLoadingSteps([
-      { id: 'extract', label: 'Stage 1 // Extracting YouTube audio stream...', status: 'active' },
-      { id: 'stems', label: 'Stage 2 // Meta HTDemucs neural stem separation (isolating guitars/piano)...', status: 'pending' },
-      { id: 'btc', label: 'Stage 3 // BTC Transformer harmonic analysis on clean stems (zero bass bleed)...', status: 'pending' },
-      { id: 'master', label: 'Stage 4 // Bass inversion tracking & AI synthesis...', status: 'pending' },
+      { id: 'extract', label: '1. Downloading audio stream...', status: 'active' },
+      { id: 'stems', label: '2. Isolating rhythm guitar and piano...', status: 'pending' },
+      { id: 'btc', label: '3. Detecting chords...', status: 'pending' },
+      { id: 'master', label: '4. Finalizing chords and bass notes...', status: 'pending' },
     ]);
 
     const timer1 = setTimeout(() => {
@@ -168,13 +168,13 @@ export default function App() {
       };
 
       setLoadingSteps([
-        { id: 'extract', label: 'Audio extraction complete', status: 'done' },
+        { id: 'extract', label: 'Audio loaded', status: 'done' },
         {
           id: 'analyze',
-          label: `Harmonics analyzed (${enriched.engine === 'gemini' ? 'Gemini 2.5 Flash' : 'BTC Model'}): Key of ${enriched.key} (${enriched.bpm} BPM)`,
+          label: `Chords analyzed: Key of ${enriched.key} (${enriched.bpm} BPM)`,
           status: 'done',
         },
-        { id: 'map', label: `${enriched.chords.length} chords aligned to downbeats`, status: 'done' },
+        { id: 'map', label: `${enriched.chords.length} chords detected`, status: 'done' },
       ]);
 
       await new Promise((r) => setTimeout(r, 350));
@@ -208,9 +208,9 @@ export default function App() {
     setAudioUrl(blobUrl);
 
     setLoadingSteps([
-      { id: 'extract', label: `Decoding ${file.name} (Web Audio API)...`, status: 'active' },
-      { id: 'analyze', label: 'Computing CQT with Rust WebAssembly & WebGPU...', status: 'pending' },
-      { id: 'map', label: 'Aligning harmonic progression & key...', status: 'pending' },
+      { id: 'extract', label: `Loading ${file.name}...`, status: 'active' },
+      { id: 'analyze', label: 'Analyzing audio...', status: 'pending' },
+      { id: 'map', label: 'Detecting chords...', status: 'pending' },
     ]);
 
     try {
@@ -245,9 +245,9 @@ export default function App() {
       );
 
       setLoadingSteps([
-        { id: 'extract', label: 'Audio decoded via Web Audio API', status: 'done' },
-        { id: 'analyze', label: `Rust Wasm & WebGPU: Key of ${result.key} (${result.bpm} BPM)`, status: 'done' },
-        { id: 'map', label: `${result.chords.length} chords aligned client-side`, status: 'done' },
+        { id: 'extract', label: 'Audio file loaded', status: 'done' },
+        { id: 'analyze', label: `Analyzed: Key of ${result.key} (${result.bpm} BPM)`, status: 'done' },
+        { id: 'map', label: `${result.chords.length} chords detected`, status: 'done' },
       ]);
 
       await new Promise((r) => setTimeout(r, 350));
@@ -458,7 +458,7 @@ export default function App() {
                           <ShieldCheck className="w-3.5 h-3.5 text-[#d4a35f]" />
                         )}
                         <span>
-                          {isLowAccuracy ? `LOW ACCURACY: ${avgConfidence}%` : `LOCK: ≥60% • ${avgConfidence}% AVG`}
+                          {isLowAccuracy ? `LOW ACCURACY: ${avgConfidence}%` : `ACCURACY: ~${avgConfidence}%`}
                         </span>
                       </div>
                     )}
@@ -477,7 +477,7 @@ export default function App() {
                       {displayChords.length} CHORDS
                     </span>
                     <span className="telemetry-stamp text-[#eceeed]">
-                      ENGINE: {analysis.engine === 'studio_master' ? 'STUDIO MASTER' : analysis.engine === 'gemini' ? 'GEMINI 2.5 FLASH' : 'BTC NEURAL MODEL'}
+                      ENGINE: {analysis.engine === 'studio_master' ? 'FULL ANALYSIS' : analysis.engine === 'gemini' ? 'AI MODEL' : 'QUICK PREVIEW'}
                     </span>
                     {analysis.grounding?.verified && (
                       <span
@@ -521,7 +521,7 @@ export default function App() {
                     </div>
                     <div>
                       <div className="font-bold text-[#e06c75] uppercase tracking-wider">
-                        POTENTIAL INACCURACY WARNING • HARMONIC CONFIDENCE IS LOW ({avgConfidence}%)
+                        ACCURACY WARNING • CONFIDENCE IS LOW ({avgConfidence}%)
                       </div>
                       <div className="text-[11px] text-[#86949e] mt-0.5">
                         The overall model confidence for this track is below 60%. Dense instrumental mixing, heavy distortion, or low guitar prominence may cause chord inaccuracies. Chords below 60% confidence are visually badged with a warning.
@@ -529,7 +529,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="text-[10px] text-[#e06c75] border border-[#e06c75]/40 px-2.5 py-1 bg-[#e06c75]/10 shrink-0 font-bold uppercase tracking-wider self-start sm:self-auto">
-                    OVERALL ACCURACY: {avgConfidence}%
+                    ACCURACY: {avgConfidence}%
                   </div>
                 </div>
               )}
@@ -560,7 +560,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Calibration Control Deck & Continuous Chord Stream */}
+              {/* Control Deck & Continuous Chord Stream */}
               <div className="space-y-4">
                 {/* Tactical Telemetry Console */}
                 <div className="cinema-letterbox p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">

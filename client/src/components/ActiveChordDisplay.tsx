@@ -68,10 +68,10 @@ export default function ActiveChordDisplay({
             {currentChord
               ? showConfidence
                 ? isConfident
-                  ? 'LIVE SIGNAL'
+                  ? 'PLAYING'
                   : 'LOW CONFIDENCE'
                 : 'LIVE'
-              : 'STANDBY'}
+              : 'READY'}
           </span>
         </div>
 
@@ -125,11 +125,11 @@ export default function ActiveChordDisplay({
               </div>
             ) : (
               <div className="flex items-center gap-1 text-[#86949e]">
-                <span>AUDIO SYNC: REALTIME</span>
+                <span>SYNC: REAL-TIME</span>
               </div>
             )}
             {currentChord && (
-              <span>WINDOW: {formatTime(currentChord.startTime)} - {formatTime(currentChord.endTime)}</span>
+              <span>TIME: {formatTime(currentChord.startTime)} - {formatTime(currentChord.endTime)}</span>
             )}
           </div>
 

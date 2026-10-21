@@ -1,17 +1,17 @@
 # 🎸 ChordSense
 
-An advanced, studio-grade YouTube chord identifier powered by the **Studio Master Pipeline**: combining **Meta AI's Hybrid Transformer Demucs (HTDemucs)** source separation, the **BTC (Bidirectional Transformer for Musical Chord Recognition)** neural network, physical **Bass Stem Pitch Extraction**, and multimodal AI chord verification.
+A YouTube chord identifier that isolates rhythm instruments, detects harmonic progressions, and syncs guitar and piano chords alongside video playback.
 
-Paste any YouTube URL or drop a local audio file, and ChordSense isolates the musical stems, detects rich chord progressions with millisecond transient accuracy, and syncs chords alongside video playback.
+Paste a YouTube link or upload an audio file, and ChordSense isolates the rhythm instruments, detects chord progressions, and syncs chords alongside video playback.
 
 ---
 
 ## 🚀 Key Features
 
-* **Studio Master Pipeline (Meta HTDemucs Neural Separation):**
-  Splits full-mix songs into clean isolated audio stems (`guitars/keys`, `bass`, `drums`, `vocals`). Running harmonic recognition on the isolated guitar and piano stem completely eliminates walking bassline flickers, drum transients, and vocal interference.
+* **Stem Separation & Instrument Isolation (Meta HTDemucs):**
+  Splits full-mix songs into isolated audio stems (`guitars/keys`, `bass`, `drums`, `vocals`). Running harmonic recognition on the isolated guitar and piano stem helps eliminate walking bassline flickers, drum transients, and vocal interference.
 * **Trained Deep Learning Model (BTC Transformer):**
-  Uses the pre-trained **BTC Transformer** via ONNX Runtime (`btc.onnx`) for tight 0.09s acoustic transient downbeat locking.
+  Uses the pre-trained **BTC Transformer** via ONNX Runtime (`btc.onnx`) for tight acoustic transient downbeat locking.
 * **Physical Bass Inversion Tracking:**
   Analyzes the isolated bass fundamental ($F_0$) to identify authentic slash chords (G/B, C/E, D/F\#).
 * **Harmonic Dwell & Chromatic Passing-Tone Filter:**
@@ -23,10 +23,14 @@ Paste any YouTube URL or drop a local audio file, and ChordSense isolates the mu
 
 ## ⚠️ Recommended Songs & Limitations
 
-* **Optimal Accuracy (Rhythm Guitar & Piano-Driven Tracks):**
-  ChordSense delivers its highest precision on songs featuring prominent rhythm guitar (acoustic or electric) or acoustic piano. Clear acoustic chord strumming and rhythmic comping allow the stem separator and BTC neural model to lock onto harmonic changes with maximum accuracy.
+* **Expected Accuracy (~80%–85% on Rhythm Tracks):**
+  ChordSense typically achieves **80%–85% accuracy** on clean rhythm guitar and acoustic piano tracks with clear strumming or chordal comping. Complex arrangements, dense mixing, or low instrument presence will reduce detection accuracy.
+
+* **Major vs. Minor Chord Confusion:**
+  The detection model can occasionally confuse **Major and Minor chords** sharing the same root note (for example, detecting $B\text{m}$ instead of $B\text{ Major}$, or $C$ instead of $C\text{m}$). This primarily happens when vocal lines, blues notes, or bass overtones introduce notes outside the underlying chord (such as a vocal minor third sung over a major chord), or when chords are played with open/suspended voicings.
+
 * **Not Recommended for Electronic Music:**
-  It is **not recommended** to input electronic music (EDM, synthwave, techno), heavily modulated synth patches, detuned 808 sub-bass glides, or ambient soundscapes. Synthetic modulation, heavy sidechain pumping, and non-harmonic frequency sweeps will confuse the neural chord detection pipeline.
+  It is **not recommended** to input electronic music (EDM, synthwave, techno), heavily modulated synthesizer pads, detuned 808 sub-bass glides, or ambient soundscapes. Synthetic modulation, heavy sidechain pumping, and non-harmonic frequency sweeps will confuse the chord detection pipeline.
 
 ---
 

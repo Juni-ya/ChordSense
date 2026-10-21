@@ -113,7 +113,7 @@ export default function TransposeControls({
               : 'Displaying all raw transient passing notes'
           }
         >
-          {filterPassingChords ? '🛡️ CLEAN (<1.3S)' : 'RAW'}
+          {filterPassingChords ? 'FILTERED' : 'ALL'}
         </button>
       </div>
 
@@ -157,7 +157,7 @@ export default function TransposeControls({
         )}
       </div>
 
-      {/* Capo Calibration */}
+      {/* Capo Settings */}
       <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#14191d] border border-[#2a333a]">
         <Guitar className="w-3.5 h-3.5 text-[#86949e]" />
         <span className="text-[#86949e]">CAPO:</span>

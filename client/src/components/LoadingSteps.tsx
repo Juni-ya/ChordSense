@@ -44,12 +44,12 @@ export default function LoadingSteps({ steps, errorMessage, onBack, onFallbackDe
         <div className="bracket-br" />
 
         <div className="text-[11px] font-mono text-[#86949e] border-b border-[#2a333a] pb-2 mb-6 flex items-center justify-between">
-          <span>SIGNAL PROCESSOR</span>
-          <span className="text-[#d4a35f]">DECODING STREAM</span>
+          <span>CHORDSENSE</span>
+          <span className="text-[#d4a35f]">ANALYZING AUDIO</span>
         </div>
 
         <h2 className="text-base font-mono font-bold text-[#eceeed] mb-6 uppercase tracking-wider">
-          {errorMessage ? 'TELEMETRY FAILURE' : 'EXTRACTING HARMONIC FREQUENCIES'}
+          {errorMessage ? 'ANALYSIS ERROR' : 'DETECTING CHORDS'}
         </h2>
 
         <div className="space-y-4 mb-6">
@@ -95,7 +95,7 @@ export default function LoadingSteps({ steps, errorMessage, onBack, onFallbackDe
                 onClick={onBack}
                 className="flex-1 py-2 px-3 bg-[#14191d] hover:bg-[#1e252b] text-[#eceeed] text-xs font-mono border border-[#2a333a] transition-colors cursor-pointer uppercase"
               >
-                ← RE-ENGAGE INGEST
+                ← TRY AGAIN
               </button>
             )}
             {onFallbackDemo && (
@@ -104,7 +104,7 @@ export default function LoadingSteps({ steps, errorMessage, onBack, onFallbackDe
                 onClick={onFallbackDemo}
                 className="flex-1 py-2 px-3 bg-[#d4a35f] hover:bg-[#e5c07b] text-black text-xs font-mono font-bold transition-colors cursor-pointer uppercase"
               >
-                LOAD TEST BENCH
+                LOAD DEMO CHORDS
               </button>
             )}
           </div>
