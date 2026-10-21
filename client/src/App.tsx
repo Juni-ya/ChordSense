@@ -479,6 +479,14 @@ export default function App() {
                     <span className="telemetry-stamp text-[#eceeed]">
                       ENGINE: {analysis.engine === 'studio_master' ? 'STUDIO MASTER' : analysis.engine === 'gemini' ? 'GEMINI 2.5 FLASH' : 'BTC NEURAL MODEL'}
                     </span>
+                    {analysis.grounding?.verified && (
+                      <span
+                        className="telemetry-stamp text-[#d4a35f] border-[#d4a35f]/60 bg-[#d4a35f]/10"
+                        title={`Verified score confirmed online (${analysis.grounding.verifiedChords?.join(', ')}). Harmonically locked to audio frequencies.`}
+                      >
+                        🌐 WEB VERIFIED: {analysis.grounding.verifiedChords?.slice(0, 5).join(' · ')}
+                      </span>
+                    )}
                   </div>
                 </div>
 

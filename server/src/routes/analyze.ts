@@ -148,6 +148,19 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       }
     }
 
+    // Attach web grounding metadata to response if verified chords were active
+    if (tabGrounding?.verifiedChords && tabGrounding.verifiedChords.length > 0 && !response.grounding) {
+      response.grounding = {
+        verified: true,
+        source: 'Ultimate-Guitar Verified Score',
+        song: tabGrounding.song,
+        artist: tabGrounding.artist,
+        soundingKey: response.key,
+        capo: tabGrounding.capo,
+        verifiedChords: tabGrounding.verifiedChords,
+      };
+    }
+
     // 7. Cache result
     await fs.mkdir(cacheDir, { recursive: true });
     await fs.writeFile(cachePath, JSON.stringify(response, null, 2));

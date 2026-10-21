@@ -9,6 +9,17 @@ export interface ChordSegment {
   confidence: number;
 }
 
+export interface GroundingInfo {
+  verified: boolean;
+  source?: string;
+  song?: string;
+  artist?: string;
+  soundingKey?: string;
+  capo?: number;
+  verifiedChords?: string[];
+  capoShift?: number;
+}
+
 export interface SongAnalysisResponse {
   videoId: string;
   title: string;
@@ -19,6 +30,7 @@ export interface SongAnalysisResponse {
   suggestedCapo: number;
   chords: ChordSegment[];
   engine?: 'studio_master' | 'hybrid' | 'btc' | 'gemini';
+  grounding?: GroundingInfo;
 }
 
 export interface AnalyzeRequest {
