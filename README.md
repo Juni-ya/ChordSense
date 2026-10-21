@@ -34,6 +34,11 @@ Paste a YouTube link or upload an audio file, and ChordSense isolates the rhythm
 
 ---
 
+## 📐 Architecture & Whiteboard Explanation
+For an in-depth whiteboard breakdown of the complete audio pipeline, neural model processing, bass pitch tracking, and frontend synchronization, see [WHITEBOARD.md](WHITEBOARD.md).
+
+---
+
 ## 🛠️ Local Development
 
 ### Prerequisites
