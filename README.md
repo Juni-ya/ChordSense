@@ -13,7 +13,7 @@ Paste any YouTube URL or drop a local audio file, and ChordSense isolates the mu
 * **Trained Deep Learning Model (BTC Transformer):**
   Uses the pre-trained **BTC Transformer** via ONNX Runtime (`btc.onnx`) for tight 0.09s acoustic transient downbeat locking.
 * **Physical Bass Inversion Tracking:**
-  Analyzes the isolated bass fundamental ($F_0$) to identify authentic slash chords ($G/B, C/E, D/F\#$).
+  Analyzes the isolated bass fundamental ($F_0$) to identify authentic slash chords (G/B, C/E, D/F\#).
 * **Harmonic Dwell & Chromatic Passing-Tone Filter:**
   Automatically filters out transient half-step chromatic slides and vocal glides ($< 1.35\text{s}$) to produce clean, professional rhythm charts.
 * **Interactive Player Controls:**
