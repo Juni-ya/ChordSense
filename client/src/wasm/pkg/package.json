@@ -1,0 +1,15 @@
+{
+  "name": "chordsense-wasm",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "chordsense_wasm_bg.wasm",
+    "chordsense_wasm.js",
+    "chordsense_wasm.d.ts"
+  ],
+  "main": "chordsense_wasm.js",
+  "types": "chordsense_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

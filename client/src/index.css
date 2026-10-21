@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --cinema-void: #08090a;
+    --cinema-surface-1: #0e1113;
+    --cinema-surface-2: #14191d;
+    --cinema-surface-3: #1e252b;
+    --cinema-border: #2a333a;
+    --cinema-border-subtle: #1c2227;
+    --cinema-amber: #d4a35f;
+    --cinema-amber-dim: rgba(212, 163, 95, 0.12);
+    --cinema-mint: #4ade80;
+    --cinema-text-primary: #eceeed;
+    --cinema-text-secondary: #86949e;
+    --cinema-text-muted: #4a5761;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--cinema-void);
+    color: var(--cinema-text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    selection-background-color: var(--cinema-amber);
+    selection-color: #000000;
+  }
+
+  /* Precise Technical Scrollbars */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #08090a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a333a;
+    border-radius: 0px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #d4a35f;
+  }
+}
+
+@layer utilities {
+  /* Denis Villeneuve / Bradford Young Anamorphic Letterbox & Frame Utilities */
+  .cinema-letterbox {
+    position: relative;
+    background-color: #0e1113;
+    border: 1px solid #2a333a;
+  }
+
+  /* Corner Bracket Viewfinders (#8 Corner Brackets) */
+  .bracket-container {
+    position: relative;
+  }
+  .bracket-tl {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #d4a35f;
+    border-left: 2px solid #d4a35f;
+    pointer-events: none;
+  }
+  .bracket-tr {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #d4a35f;
+    border-right: 2px solid #d4a35f;
+    pointer-events: none;
+  }
+  .bracket-bl {
+    position: absolute;
+    bottom: -1px;
+    left: -1px;
+    width: 8px;
+    height: 8px;
+    border-bottom: 2px solid #d4a35f;
+    border-left: 2px solid #d4a35f;
+    pointer-events: none;
+  }
+  .bracket-br {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 8px;
+    height: 8px;
+    border-bottom: 2px solid #d4a35f;
+    border-right: 2px solid #d4a35f;
+    pointer-events: none;
+  }
+
+  /* Telemetry Crosshair Marker (#10 Cross Marks) */
+  .crosshair-mark {
+    position: relative;
+  }
+  .crosshair-mark::after {
+    content: "+";
+    position: absolute;
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: #4a5761;
+    pointer-events: none;
+  }
+
+  /* Forensic Telemetry Stamp */
+  .telemetry-stamp {
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #86949e;
+    background-color: #14191d;
+    border: 1px solid #2a333a;
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+
+  .telemetry-stamp-active {
+    color: #d4a35f;
+    border-color: #d4a35f;
+    background-color: rgba(212, 163, 95, 0.08);
+  }
+
+  /* Translucent Optical Bridge */
+  .optical-bridge {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(8, 9, 10, 0.88);
+    border-bottom: 1px solid #2a333a;
+  }
+}

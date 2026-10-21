@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+*/node_modules/
+__pycache__/
+*.pyc
+
+# Production Builds
+dist/
+*/dist/
+build/
+*/build/
+*.tsbuildinfo
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.*
+!.env.example
+*.env
+server/.env
+
+# Audio Cache & Demucs Stems
+chordsense-cache/
+chordsense-audio/
+chordsense-stems/
+demucs_test/
+*.mp3
+*.m4a
+*.wav
+*.flac
+*.aac
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Rust build artifacts
+target/
+crates/**/target/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Internal Agent Skills
+.agents/
+cinematic-ui/
