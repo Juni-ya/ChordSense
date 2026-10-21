@@ -130,18 +130,15 @@ export default function URLInput({
         <div className="text-center max-w-2xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 mb-3">
             <span className="telemetry-stamp telemetry-stamp-active">
-              CHORDSENSE
+              AI CHORD IDENTIFIER
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#eceeed] mb-2 uppercase">
-            Identify Guitar & Piano Chords
+            ChordSense
           </h1>
           <p className="text-[#86949e] text-sm sm:text-base font-normal max-w-lg mx-auto">
             Paste a YouTube link or upload an audio file to view synchronized chords.
-          </p>
-          <p className="text-[#657683] text-xs font-mono mt-2 max-w-lg mx-auto">
-            💡 Best results on rhythm guitar and acoustic piano (~80-85% accuracy). Note: output may occasionally confuse Major and Minor chords with strong vocal melodies. Not recommended for electronic music or heavy distortion.
           </p>
         </div>
 
